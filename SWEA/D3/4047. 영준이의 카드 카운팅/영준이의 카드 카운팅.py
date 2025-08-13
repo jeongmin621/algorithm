@@ -1,42 +1,43 @@
-# 4047. 영준이의 카드 카운팅
 
 T = int(input())
 
 for tc in range(1, T + 1):
-    S = list(map(str, input().strip()))  # TXY -> T: 무늬, XY: 숫자
-
-    # 한 덱의 카드 dict 만들기
-    card = {}
+    # 카드 한 덱 dict 만들기
     card_T = ['S', 'D', 'H', 'C']
-    for i in range(4):
-        card[card_T[i]] = []
-        for j in range(1, 14):
-            card[card_T[i]].append(j)
+    card_dict = {}
+    for t in card_T:
+        card_dict[t] = []
+        for num in range(1, 14):
+            card_dict[t].append(num)
 
-    result = True
+    S = list(map(str, input().strip()))
 
-    for idx in range(0, len(S), 3):
-        # 카드의 무늬 -> 인덱스가 0이거나 3의 배수인 경우만 골라서
-        this_card_T = S[idx]
-        # 그 카드의 숫자
-        num_str = []
-        for d in range(1, 3):
-            num_str.append(S[idx + d])
-        num = int(''.join(num_str))
+    is_duplicate = False
 
-        # dict 에서 빼기
-        if num in card[this_card_T]:
-            card[this_card_T].remove(num)
+    # 문자열의 인덱스가 0 또는 3의 배수인 문자는 카드의 무늬
+    for i in range(0, len(S), 3):
+        key = S[i]
+
+        # 그 다음 두 칸은 카드의 숫자
+        num = 0
+        for j in range(1, 3):
+            num *= 10
+            num += int(S[i + j])
+
+        # 딕셔너리에 있으면 지우고 없으면 중복 판정
+        if num in card_dict[key]:
+            card_dict[key].remove(num)
         else:
-            result = False
+            is_duplicate = True
 
     result_list = []
-    for num_list in list(card.values()):
+    for num_list in card_dict.values():
         result_list.append(len(num_list))
-    if result:
-        result = str(result_list).replace(',', '')[1:-1]
-    else:
+
+    result = ''
+    if is_duplicate:
         result = 'ERROR'
+    else:
+        result = str(result_list).replace(',', '')[1:-1]
 
     print(f'#{tc} {result}')
-
